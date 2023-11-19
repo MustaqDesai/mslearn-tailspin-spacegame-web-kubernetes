@@ -40,7 +40,6 @@ stages:
 
     - publish: '$(Build.SourcesDirectory)/manifests'
       artifact: manifests
-
 - stage: 'Deploy'
   displayName: 'Deploy the container'
   dependsOn: Build
@@ -49,7 +48,7 @@ stages:
     displayName: 'Deploy job'
     pool:
       vmImage: 'ubuntu-20.04'
-    environment: 'Dev'     
+      environment: 'Dev'     
     variables:
     - group: Release
     strategy:
@@ -73,17 +72,17 @@ stages:
           - task: KubernetesManifest@1
             displayName: Deploy to Kubernetes cluster
             inputs:
-                action: deploy
-                connectionType: azureResourceManager
-                azureSubscriptionConnection: 'Kubernetes Cluster Connection'
-                azureResourceGroup: 'tailspin-space-game-rg'
-                kubernetesCluster: 'tailspinspacegame-24591'
-                namespace: 'default'
-                manifests: |
+              action: deploy
+              connectionType: azureResourceManager
+              azureSubscriptionConnection: 'Kubernetes Cluster Connection'
+              azureResourceGroup: 'tailspin-space-game-rg'
+              kubernetesCluster: 'tailspinspacegame-24591'
+              namespace: 'default'
+              manifests: |
                   $(Pipeline.Workspace)/manifests/deployment.yml
                   $(Pipeline.Workspace)/manifests/service.yml
-                imagePullSecrets: |
+              imagePullSecrets: |
                   $(imagePullSecret)
-                containers: |
+              containers: |
                   $(RegistryName)/$(webRepository):$(tag)
                   $(RegistryName)/$(leaderboardRepository):$(tag)
